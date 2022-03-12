@@ -1,3 +1,5 @@
+-- by running source db/schema.sql, it runs this command and creates the table!
+
 CREATE TABLE candidates (
   id INTEGER AUTO_INCREMENT PRIMARY KEY,
   first_name VARCHAR(30) NOT NULL,

@@ -1,3 +1,5 @@
+-- by running source db/seeds.sql, it runs the commands here and adds data to the table!
+
 INSERT INTO candidates (first_name, last_name, industry_connected)
 VALUES
   ('Ronald', 'Firbank', 1),
