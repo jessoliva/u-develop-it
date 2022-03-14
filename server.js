@@ -38,7 +38,12 @@ const db = mysql.createConnection(
 app.get('/api/candidates', (req, res) => {
 
     // assign sql command to variable
-    const sql = `SELECT * FROM candidates`;
+    const sql = `SELECT candidates.*, parties.name 
+                AS party_name 
+                FROM candidates 
+                LEFT JOIN parties 
+                ON candidates.party_id = parties.id`;
+    // left join means, return all rows from the left table (candidates), even if there are no matches in the right table (parties)
   
     db.query(sql, (err, rows) => {
         if (err) {
@@ -71,7 +76,13 @@ app.get('/api/candidates', (req, res) => {
 // assign the captured value populated in the req.params object with the key id to params
 app.get('/api/candidate/:id', (req, res) => {
 
-    const sql = `SELECT * FROM candidates WHERE id = ?`;
+    // still able to use a WHERE clause with a JOIN, but we had to place it at the end of the statement
+    const sql = `SELECT candidates.*, parties.name 
+                AS party_name 
+                FROM candidates 
+                LEFT JOIN parties 
+                ON candidates.party_id = parties.id 
+                WHERE candidates.id = ?`;
     // Because params can be accepted in the database call as an array, params is assigned as an array with a single element, req.params.id
     const params = [req.params.id];
     
