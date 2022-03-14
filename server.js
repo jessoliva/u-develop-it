@@ -163,6 +163,104 @@ app.post('/api/candidate', ({ body }, res) => {
 // In the callback function, we'll use the object req.body to populate the candidate's data and we're using object destructuring to pull the body property out of the request object in { body } instead of req in parameter
 // If the inputCheck() function returns an error, an error message is returned to the client as a 400 status code, to prompt for a different user request with a JSON object that contains the reasons for the errors
 
+// Update a candidate's party
+app.put('/api/candidate/:id', (req, res) => {
+
+    // be extra sure that a party_id was provided before we attempt to update the database
+    // This now forces any PUT request to /api/candidate/:id to include a party_id property
+    // Even if the intention is to remove a party affiliation by setting it to null, the party_id property is still required -- null
+    const errors = inputCheck(req.body, 'party_id');
+
+    if (errors) {
+        res.status(400).json({ error: errors });
+        return;
+    }
+
+    const sql = `UPDATE candidates SET party_id = ? 
+                 WHERE id = ?`;
+    const params = [req.body.party_id, req.params.id];
+    // we're using a parameter for the candidate's id (req.params.id), the request body contains the party's id (req.body.party_id
+    // The affected row's id should always be part of the route (e.g., /api/candidate/2) while the actual fields we're updating should be part of the body.
+
+    db.query(sql, params, (err, result) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            // check if a record was found
+        } else if (!result.affectedRows) {
+            res.json({
+            message: 'Candidate not found'
+            });
+        } else {
+            res.json({
+            message: 'success',
+            data: req.body,
+            changes: result.affectedRows
+            });
+        }
+    });
+});
+
+
+// get all parties
+app.get('/api/parties', (req, res) => {
+
+    const sql = `SELECT * FROM parties`;
+
+    db.query(sql, (err, rows) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+        return;
+      }
+      res.json({
+        message: 'success',
+        data: rows
+      });
+    });
+});
+
+// get party based on id
+app.get('/api/party/:id', (req, res) => {
+    
+    const sql = `SELECT * FROM parties WHERE id = ?`;
+    const params = [req.params.id];
+
+    db.query(sql, params, (err, row) => {
+      if (err) {
+        res.status(400).json({ error: err.message });
+        return;
+      }
+      res.json({
+        message: 'success',
+        data: row
+      });
+    });
+});
+
+// delete a party
+// when a party is deleted, the candidates will have a NULL value if it had that party
+app.delete('/api/party/:id', (req, res) => {
+
+    const sql = `DELETE FROM parties WHERE id = ?`;
+    const params = [req.params.id];
+
+    db.query(sql, params, (err, result) => {
+      if (err) {
+        res.status(400).json({ error: res.message });
+        // checks if anything was deleted
+      } else if (!result.affectedRows) {
+        res.json({
+          message: 'Party not found'
+        });
+      } else {
+        res.json({
+          message: 'deleted',
+          changes: result.affectedRows,
+          id: req.params.id
+        });
+      }
+    });
+});
+
 // order of routes matter so this route should be at the very end since it's a catchall
 // Default response for any other request (Not Found)
 app.use((req, res) => {
