@@ -96,14 +96,14 @@ canRouter.post('/candidate', ({ body }, res) => {
     // params assignment contains three elements in its array that contains the user data collected in req.body
 
     db.query(sql, params, (err, result) => {
-    if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-    }
-    res.json({
-        message: 'success',
-        data: body
-    });
+        if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: body
+        });
     });
 });
 // In the callback function, we'll use the object req.body to populate the candidate's data and we're using object destructuring to pull the body property out of the request object in { body } instead of req in parameter
@@ -132,11 +132,13 @@ canRouter.put('/candidate/:id', (req, res) => {
         if (err) {
             res.status(400).json({ error: err.message });
             // check if a record was found
-        } else if (!result.affectedRows) {
+        } 
+        else if (!result.affectedRows) {
             res.json({
             message: 'Candidate not found'
             });
-        } else {
+        } 
+        else {
             res.json({
             message: 'success',
             data: req.body,
