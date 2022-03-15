@@ -24,6 +24,9 @@ voteRouter.get('/votes', (req, res) => {
         });
     });
 });
+// LEFT JOIN clause selects data starting from the left table (votes). It matches each row from the left table (votes) with every row from the right table(candidates and parties) based on the join_condition
+// LEFT JOIN returns all rows from the left table regardless of whether a row from the left table has a matching row from the right table or not
+// If there is no match, the columns of the row from the right table will contain NULL
 
 // create a vote
 voteRouter.post('/vote', ({ body }, res) => {
