@@ -6,5 +6,6 @@ const indexRouter = express.Router();
 // import candidate routes
 indexRouter.use(require('./candidateRoutes'));
 indexRouter.use(require('./partyRoutes'));
+indexRouter.use(require('./voterRoutes'));
 
 module.exports = indexRouter;
