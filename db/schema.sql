@@ -51,3 +51,4 @@ CREATE TABLE votes (
 -- first constraint, uc_voter, signifies that the values inserted into the voter_id field must be unique. For example, whoever has a voter_id of 1 can only appear in this table once
 -- ON DELETE CASCADE, deleting the reference key will also delete the entire row from this table --> so if a voter is deleted, their vote will be deleted fully! not set the value to null
 -- ON DELETE SET NULL would set the record's field to NULL if the key from the reference table was deleted
+
